@@ -44,15 +44,17 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .main-layout{display:flex;flex:1;overflow:hidden;min-height:0}
 
 /* sidebar estreita — tabelas sempre visíveis */
-.sidebar{width:280px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:12px}
-.schema-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
-table.db{border-collapse:collapse;font-size:.67rem;font-family:var(--mono);width:100%;margin-bottom:12px}
-table.db caption{text-align:left;font-weight:700;color:var(--accent);margin-bottom:2px;font-size:.72rem}
-table.db th{background:var(--surface2);color:var(--muted);padding:2px 5px;border:1px solid var(--border);font-weight:600;white-space:nowrap}
-table.db td{padding:2px 5px;border:1px solid var(--border);white-space:nowrap;font-size:.64rem}
+.sidebar{width:33%;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:14px 12px}
+.db-wrap{overflow-x:auto;margin-bottom:14px;border-radius:4px}
+.db-wrap table.db{margin-bottom:0;min-width:100%}
+.schema-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+table.db{border-collapse:collapse;font-size:.73rem;font-family:var(--mono);width:100%}
+table.db caption{text-align:left;font-weight:700;color:var(--accent);margin-bottom:2px;font-size:.78rem}
+table.db th{background:var(--surface2);color:var(--muted);padding:3px 7px;border:1px solid var(--border);font-weight:600;white-space:nowrap}
+table.db td{padding:3px 7px;border:1px solid var(--border);white-space:nowrap;font-size:.71rem}
 .pk{color:var(--yellow)!important;font-weight:700}
 .fk{color:#79c0ff!important}
-.schema-legend{font-size:.65rem;color:var(--muted);line-height:1.9;margin-top:2px}
+.schema-legend{font-size:.72rem;color:var(--muted);line-height:2.0;margin-top:2px}
 
 /* coluna perguntas */
 .questions-col{flex:1;overflow-y:auto;padding:14px 16px 90px;min-width:0}
@@ -76,6 +78,8 @@ code{background:var(--surface2);border:1px solid var(--border);border-radius:4px
 .opt-letter{font-weight:700;font-size:.7rem;background:var(--border);color:var(--muted);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 .opt.selected .opt-letter{background:var(--accent);color:#000}
 .opt-text{font-size:.83rem;line-height:1.45}
+.opt-text code{background:transparent;border:none;padding:0;font-size:.8rem;color:inherit}
+.opt-text code .kw{color:#ff7b72}.opt-text code .str{color:#a5d6ff}.opt-text code .num{color:#79c0ff}
 
 /* ── BARRA SUBMISSÃO ─────────────────────────────────────────────────── */
 .submit-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;z-index:20}
@@ -121,7 +125,7 @@ code{background:var(--surface2);border:1px solid var(--border);border-radius:4px
 .wrong-item .wi-yours{color:var(--red);font-size:.76rem}
 
 /* ── RESPONSIVO ─────────────────────────────────────────────────────── */
-@media (max-width:1000px) {
+@media (max-width:900px) {
   #screen-quiz{height:auto}
   .main-layout{flex-direction:column;overflow:visible}
   .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);overflow-y:visible}
@@ -169,17 +173,17 @@ code{background:var(--surface2);border:1px solid var(--border);border-radius:4px
     <!-- sidebar fixa -->
     <div class="sidebar">
       <div class="schema-title">📊 Tabelas de referência</div>
-      <table class="db">
+      <div class="db-wrap"><table class="db">
         <caption>Aluno</caption>
-        <tr><th class="pk">idAluno</th><th>nome</th><th>dataNasc</th><th>gen.</th><th>morada</th><th class="fk">codPost</th><th class="fk">idTurma</th></tr>
+        <tr><th class="pk">idAluno</th><th>nome</th><th>dataNasc</th><th>genero</th><th>morada</th><th class="fk">codPost</th><th class="fk">idTurma</th></tr>
         <tr><td>1</td><td>António Santos</td><td>23-01-2009</td><td>M</td><td>Rua das Flores, 1</td><td>2890-555</td><td>4</td></tr>
         <tr><td>2</td><td>Maria João Silva</td><td>12-09-2010</td><td>F</td><td>Rua Direita, 45</td><td>2890-426</td><td>3</td></tr>
         <tr><td>3</td><td>Gonçalo Antunes</td><td>15-02-2009</td><td>M</td><td>Av. D Carlos, 119</td><td>2860-301</td><td>4</td></tr>
         <tr><td>4</td><td>Marta Lopes</td><td>23-07-2011</td><td>F</td><td>Rua D. Manuel, 14</td><td>2870-123</td><td>1</td></tr>
         <tr><td>5</td><td>Ana Travassos</td><td>25-06-2008</td><td>F</td><td>Rua do Esgaio, 5</td><td>2890-555</td><td>2</td></tr>
         <tr><td colspan="7" style="color:var(--muted);text-align:center;font-size:.62rem">… mais registos …</td></tr>
-      </table>
-      <table class="db">
+      </table></div>
+      <div class="db-wrap"><table class="db">
         <caption>Localidade</caption>
         <tr><th class="pk">codPost</th><th>local</th></tr>
         <tr><td>2890-555</td><td>Alcochete</td></tr>
@@ -187,15 +191,15 @@ code{background:var(--surface2);border:1px solid var(--border);border-radius:4px
         <tr><td>2890-426</td><td>Alcochete</td></tr>
         <tr><td>2860-301</td><td>Moita</td></tr>
         <tr><td colspan="2" style="color:var(--muted);text-align:center;font-size:.62rem">…</td></tr>
-      </table>
-      <table class="db">
+      </table></div>
+      <div class="db-wrap"><table class="db">
         <caption>Turma</caption>
         <tr><th class="pk">idTurma</th><th>letra</th><th>sala</th></tr>
         <tr><td>1</td><td>A</td><td>AN12</td></tr>
         <tr><td>2</td><td>B</td><td>AN1</td></tr>
         <tr><td>3</td><td>C</td><td>AN19</td></tr>
         <tr><td>4</td><td>D</td><td>AN16</td></tr>
-      </table>
+      </table></div>
       <div class="schema-legend">
         <span style="color:var(--yellow);font-weight:700">■</span> Chave Primária (PK)<br>
         <span style="color:#79c0ff;font-weight:700">■</span> Chave Estrangeira (FK)
@@ -781,32 +785,6 @@ const Q_ORIGINAL = [
   },
   {
     "t": "SQL DDL",
-    "q": "Que comando SQL elimina a tabela Localidade da base de dados (estrutura e dados)?",
-    "code": "",
-    "opts": [
-      "DELETE TABLE Localidade;",
-      "DROP TABLE Localidade;",
-      "REMOVE TABLE Localidade;",
-      "ALTER TABLE Localidade DROP ALL;"
-    ],
-    "ans": 1,
-    "fb": "DROP TABLE elimina a tabela completamente — estrutura e todos os dados. É uma operação irreversível. DELETE FROM Localidade; eliminaria apenas os dados mas manteria a estrutura da tabela."
-  },
-  {
-    "t": "SQL DDL",
-    "q": "Qual a diferença entre DELETE FROM Aluno; e DROP TABLE Aluno;?",
-    "code": "",
-    "opts": [
-      "Não há diferença — ambos eliminam a tabela",
-      "DELETE FROM elimina apenas o primeiro registo; DROP TABLE elimina todos",
-      "DELETE FROM elimina todos os dados mas mantém a estrutura; DROP TABLE elimina tudo incluindo a estrutura",
-      "DROP TABLE é mais rápido mas produz o mesmo resultado que DELETE FROM"
-    ],
-    "ans": 2,
-    "fb": "DELETE FROM Aluno; apaga todos os registos mas a tabela continua a existir — podes continuar a inserir dados. DROP TABLE Aluno; elimina a tabela por completo (estrutura + dados). São operações muito diferentes."
-  },
-  {
-    "t": "SQL DDL",
     "q": "Na criação de uma tabela, para que serve a restrição NOT NULL num campo?",
     "code": "",
     "opts": [
@@ -895,8 +873,40 @@ const Q_ORIGINAL = [
     ],
     "ans": 0,
     "fb": "Sintaxe correcta do UPDATE: UPDATE tabela SET campo = valor WHERE condição. Sem a cláusula WHERE, TODOS os registos da tabela seriam alterados — um erro muito frequente e difícil de reverter."
+  },
+  {
+    "t": "Aliases (AS)",
+    "q": "O que mostra esta instrução?",
+    "code": "SELECT nome AS 'Nome do Aluno', dataNasc AS Nascimento\nFROM Aluno;",
+    "opts": [
+      "Dá erro — AS não pode ser usado com espaços no alias",
+      "Cria duas novas colunas na tabela Aluno",
+      "Mostra nome e dataNasc com os cabeçalhos 'Nome do Aluno' e 'Nascimento'",
+      "Mostra apenas os alunos cujo nome tem mais de uma palavra"
+    ],
+    "ans": 2,
+    "fb": "AS renomeia as colunas no output — só no resultado da query, não altera a estrutura da tabela. Quando o alias tem espaços, coloca-se entre aspas simples. Os dados e a estrutura da tabela Aluno não são alterados."
+  },
+  {
+    "t": "Estrutura SQL",
+    "q": "Qual a ordem correcta das cláusulas numa instrução SELECT?",
+    "code": "",
+    "opts": [
+      "FROM → SELECT → WHERE → ORDER BY",
+      "SELECT → WHERE → FROM → ORDER BY",
+      "FROM → WHERE → SELECT → GROUP BY",
+      "SELECT → FROM → WHERE → GROUP BY → ORDER BY"
+    ],
+    "ans": 3,
+    "fb": "A ordem de escrita obrigatória é: SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT. O SQL processa-as internamente noutra ordem, mas a escrita tem de seguir sempre esta sequência — caso contrário dá erro de sintaxe."
   }
 ];
+
+// Embaralha perguntas e, dentro de cada pergunta, embaralha as opções
+// Guarda o mapeamento novo→original para correcção correcta
+let Q = [];
+let studentName = '';
+let answers = [];
 
 // ── aleatoriedade ─────────────────────────────────────────────────────────
 function shuffle(arr) {
@@ -907,12 +917,6 @@ function shuffle(arr) {
   }
   return a;
 }
-
-// Embaralha perguntas e, dentro de cada pergunta, embaralha as opções
-// Guarda o mapeamento novo→original para correcção correcta
-let Q = [];
-let studentName = '';
-let answers = [];
 
 function buildShuffledQuiz() {
   // embaralhar ordem das perguntas
