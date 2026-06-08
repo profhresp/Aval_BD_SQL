@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de Avaliação — UFCD 0811 / 10788</title>
+<style>
+:root {
+  --bg:#0d1117; --surface:#161b22; --surface2:#21262d; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#58a6ff;
+  --green:#3fb950; --red:#f85149; --yellow:#d29922; --orange:#e3b341;
+  --mono:'Fira Mono','Cascadia Code','Consolas',monospace;
+  --header-h:52px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;min-height:100vh}
+
+/* ── ECRÃ INICIAL ───────────────────────────────────────────────────── */
+#screen-start{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.start-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:40px;max-width:480px;width:100%;text-align:center}
+.start-logo{font-size:2.4rem;margin-bottom:16px}
+.start-card h1{font-size:1.3rem;font-weight:700;margin-bottom:6px}
+.start-subtitle{color:var(--muted);font-size:.88rem;margin-bottom:28px;line-height:1.6}
+.info-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:24px;text-align:left;font-size:.83rem;color:var(--muted);line-height:1.8}
+.info-box strong{color:var(--text)}
+.field-label{display:block;text-align:left;font-size:.82rem;color:var(--muted);margin-bottom:6px}
+.name-input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;outline:none;transition:border-color .2s}
+.name-input:focus{border-color:var(--accent)}
+.name-input.error{border-color:var(--red)}
+.input-error{color:var(--red);font-size:.78rem;margin-top:5px;display:none;text-align:left}
+.btn-start{margin-top:20px;width:100%;padding:13px;background:var(--accent);color:#000;border:none;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;transition:opacity .2s}
+.btn-start:hover{opacity:.88}
+
+/* ── LAYOUT QUIZ ────────────────────────────────────────────────────── */
+#screen-quiz{display:none;flex-direction:column;height:100vh}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:var(--header-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.header-title{font-size:.88rem;font-weight:600;color:var(--accent)}
+.header-student{font-size:.75rem;color:var(--muted);margin-top:2px}
+.prog-text{font-size:.82rem;color:var(--muted);white-space:nowrap}
+.prog-wrap{height:3px;background:var(--surface2);flex-shrink:0}
+.prog-bar{height:3px;background:var(--accent);width:0;transition:width .3s}
+
+/* duas colunas */
+.main-layout{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* sidebar estreita — tabelas sempre visíveis */
+.sidebar{width:280px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:12px}
+.schema-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+table.db{border-collapse:collapse;font-size:.67rem;font-family:var(--mono);width:100%;margin-bottom:12px}
+table.db caption{text-align:left;font-weight:700;color:var(--accent);margin-bottom:2px;font-size:.72rem}
+table.db th{background:var(--surface2);color:var(--muted);padding:2px 5px;border:1px solid var(--border);font-weight:600;white-space:nowrap}
+table.db td{padding:2px 5px;border:1px solid var(--border);white-space:nowrap;font-size:.64rem}
+.pk{color:var(--yellow)!important;font-weight:700}
+.fk{color:#79c0ff!important}
+.schema-legend{font-size:.65rem;color:var(--muted);line-height:1.9;margin-top:2px}
+
+/* coluna perguntas */
+.questions-col{flex:1;overflow-y:auto;padding:14px 16px 90px;min-width:0}
+
+/* ── PERGUNTAS ───────────────────────────────────────────────────────── */
+.q-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid transparent;border-radius:9px;padding:15px 17px;margin-bottom:11px;transition:border-color .2s}
+.q-card.answered{border-left-color:var(--accent)}
+.q-header{display:flex;gap:7px;align-items:center;margin-bottom:9px;flex-wrap:wrap}
+.q-num{background:var(--accent);color:#000;font-weight:700;font-size:.68rem;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.q-topic{background:var(--surface2);color:var(--muted);font-size:.66rem;padding:2px 6px;border-radius:20px}
+.q-badge{margin-left:auto;font-size:.66rem;color:var(--green);display:none}
+.q-card.answered .q-badge{display:block}
+.q-text{font-size:.87rem;line-height:1.6;margin-bottom:10px}
+pre{background:#0d1117;border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:var(--mono);font-size:.75rem;overflow-x:auto;margin:7px 0;line-height:1.7;white-space:pre}
+.kw{color:#ff7b72}.str{color:#a5d6ff}.num{color:#79c0ff}
+code{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 4px;font-family:var(--mono);font-size:.73rem;color:#79c0ff}
+.options{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid var(--border);cursor:pointer;transition:all .15s;background:var(--surface2);user-select:none}
+.opt:hover:not(.disabled){border-color:var(--accent);background:#1c2330}
+.opt.selected{border-color:var(--accent);background:#1c2330}
+.opt-letter{font-weight:700;font-size:.7rem;background:var(--border);color:var(--muted);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.opt.selected .opt-letter{background:var(--accent);color:#000}
+.opt-text{font-size:.83rem;line-height:1.45}
+
+/* ── BARRA SUBMISSÃO ─────────────────────────────────────────────────── */
+.submit-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;z-index:20}
+.submit-bar span{font-size:.82rem;color:var(--muted)}
+.submit-bar strong{color:var(--text)}
+.btn-submit{background:var(--green);color:#000;border:none;padding:9px 22px;border-radius:7px;font-weight:700;cursor:pointer;font-size:.88rem;transition:opacity .2s}
+.btn-submit:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
+.btn-submit:not(:disabled):hover{opacity:.85}
+
+/* ── MODAL ───────────────────────────────────────────────────────────── */
+#modal-confirm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center}
+#modal-confirm.open{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:26px;max-width:380px;width:90%;text-align:center}
+.modal-box h2{font-size:.98rem;margin-bottom:9px}
+.modal-box p{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:18px}
+.modal-btns{display:flex;gap:9px;justify-content:center}
+.modal-btn-cancel{padding:8px 18px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-size:.85rem}
+.modal-btn-ok{padding:8px 18px;border-radius:7px;border:none;background:var(--green);color:#000;font-weight:700;cursor:pointer;font-size:.85rem}
+
+/* ── RESULTADO ───────────────────────────────────────────────────────── */
+#screen-result{display:none;max-width:660px;margin:0 auto;padding:28px 20px 60px}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:30px;text-align:center;margin-bottom:14px}
+.result-emoji{font-size:2.8rem;margin-bottom:10px}
+.result-name{font-size:.84rem;color:var(--muted);margin-bottom:5px}
+.result-val{font-size:2.3rem;font-weight:700;color:var(--accent);margin:5px 0}
+.result-nota{font-size:.98rem;margin-bottom:4px}
+.result-nota strong{color:var(--green);font-size:1.2rem}
+.result-pct{font-size:.83rem;color:var(--muted);margin-bottom:20px}
+.ds-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;text-align:left;margin-top:14px}
+.ds-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 11px}
+.ds-label{font-size:.68rem;color:var(--muted);margin-bottom:2px}
+.ds-val{font-weight:700;font-size:.9rem}
+.ds-val.ok{color:var(--green)}.ds-val.mid{color:var(--yellow)}.ds-val.bad{color:var(--red)}
+.send-status{margin:12px 0;padding:10px 14px;border-radius:8px;font-size:.82rem;text-align:center;display:none;line-height:1.5}
+.send-status.sending{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.send-status.sent{background:#0d2116;border:1px solid var(--green);color:#7ee787}
+.send-status.error{background:#200d0d;border:1px solid var(--red);color:#ffa198}
+.wrong-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px 17px}
+.wrong-section h3{font-size:.82rem;color:var(--muted);margin-bottom:9px}
+.wrong-item{font-size:.79rem;padding:7px 10px;background:var(--surface2);border-radius:6px;margin-bottom:5px;border-left:3px solid var(--red)}
+.wrong-item .wi-q{margin-bottom:3px}
+.wrong-item .wi-ans{color:var(--green);font-size:.76rem}
+.wrong-item .wi-yours{color:var(--red);font-size:.76rem}
+
+/* ── RESPONSIVO ─────────────────────────────────────────────────────── */
+@media (max-width:1000px) {
+  #screen-quiz{height:auto}
+  .main-layout{flex-direction:column;overflow:visible}
+  .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);overflow-y:visible}
+  table.db td,table.db th{white-space:normal}
+  .questions-col{overflow-y:visible;padding-bottom:80px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ ECRÃ INICIAL ══════════════════════════════════════════════════════ -->
+<div id="screen-start">
+  <div class="start-card">
+    <div class="start-logo">📝</div>
+    <h1>Ficha de Avaliação</h1>
+    <p class="start-subtitle">UFCD 0811 — Análise de Sistemas<br>UFCD 10788 — Fundamentos de SQL</p>
+    <div class="info-box">
+      <strong>Instruções:</strong><br>
+      • 50 perguntas de escolha múltipla<br>
+      • Apenas uma resposta correcta por pergunta<br>
+      • Podes alterar a resposta antes de submeter<br>
+      • Não existe correcção durante o teste<br>
+      • As perguntas e respostas aparecem por ordem aleatória<br>
+      • Submete no final para ver a nota
+    </div>
+    <label class="field-label" for="input-name">O teu nome completo</label>
+    <input class="name-input" id="input-name" type="text" placeholder="Ex: João Silva" autocomplete="off"/>
+    <div class="input-error" id="name-error">Por favor escreve o teu nome antes de começar.</div>
+    <button class="btn-start" onclick="startQuiz()">Começar →</button>
+  </div>
+</div>
+
+<!-- ══ ECRÃ QUIZ ══════════════════════════════════════════════════════════ -->
+<div id="screen-quiz">
+  <header>
+    <div>
+      <div class="header-title">Ficha de Avaliação — UFCD 0811 / 10788</div>
+      <div class="header-student" id="header-student"></div>
+    </div>
+    <span class="prog-text"><span id="prog-text">0</span> / 50 respondidas</span>
+  </header>
+  <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+
+  <div class="main-layout">
+    <!-- sidebar fixa -->
+    <div class="sidebar">
+      <div class="schema-title">📊 Tabelas de referência</div>
+      <table class="db">
+        <caption>Aluno</caption>
+        <tr><th class="pk">idAluno</th><th>nome</th><th>dataNasc</th><th>gen.</th><th>morada</th><th class="fk">codPost</th><th class="fk">idTurma</th></tr>
+        <tr><td>1</td><td>António Santos</td><td>23-01-2009</td><td>M</td><td>Rua das Flores, 1</td><td>2890-555</td><td>4</td></tr>
+        <tr><td>2</td><td>Maria João Silva</td><td>12-09-2010</td><td>F</td><td>Rua Direita, 45</td><td>2890-426</td><td>3</td></tr>
+        <tr><td>3</td><td>Gonçalo Antunes</td><td>15-02-2009</td><td>M</td><td>Av. D Carlos, 119</td><td>2860-301</td><td>4</td></tr>
+        <tr><td>4</td><td>Marta Lopes</td><td>23-07-2011</td><td>F</td><td>Rua D. Manuel, 14</td><td>2870-123</td><td>1</td></tr>
+        <tr><td>5</td><td>Ana Travassos</td><td>25-06-2008</td><td>F</td><td>Rua do Esgaio, 5</td><td>2890-555</td><td>2</td></tr>
+        <tr><td colspan="7" style="color:var(--muted);text-align:center;font-size:.62rem">… mais registos …</td></tr>
+      </table>
+      <table class="db">
+        <caption>Localidade</caption>
+        <tr><th class="pk">codPost</th><th>local</th></tr>
+        <tr><td>2890-555</td><td>Alcochete</td></tr>
+        <tr><td>2870-123</td><td>Montijo</td></tr>
+        <tr><td>2890-426</td><td>Alcochete</td></tr>
+        <tr><td>2860-301</td><td>Moita</td></tr>
+        <tr><td colspan="2" style="color:var(--muted);text-align:center;font-size:.62rem">…</td></tr>
+      </table>
+      <table class="db">
+        <caption>Turma</caption>
+        <tr><th class="pk">idTurma</th><th>letra</th><th>sala</th></tr>
+        <tr><td>1</td><td>A</td><td>AN12</td></tr>
+        <tr><td>2</td><td>B</td><td>AN1</td></tr>
+        <tr><td>3</td><td>C</td><td>AN19</td></tr>
+        <tr><td>4</td><td>D</td><td>AN16</td></tr>
+      </table>
+      <div class="schema-legend">
+        <span style="color:var(--yellow);font-weight:700">■</span> Chave Primária (PK)<br>
+        <span style="color:#79c0ff;font-weight:700">■</span> Chave Estrangeira (FK)
+      </div>
+    </div>
+
+    <!-- perguntas com scroll -->
+    <div class="questions-col" id="quiz-area"></div>
+  </div>
+</div>
+
+<!-- ══ BARRA SUBMISSÃO ════════════════════════════════════════════════════ -->
+<div class="submit-bar" id="submit-bar" style="display:none">
+  <span>Respondidas: <strong><span id="answered-count">0</span> / 50</strong></span>
+  <button class="btn-submit" id="btn-submit" disabled onclick="openConfirm()">Submeter e ver nota →</button>
+</div>
+
+<!-- ══ MODAL ══════════════════════════════════════════════════════════════ -->
+<div id="modal-confirm">
+  <div class="modal-box">
+    <h2>Submeter a ficha?</h2>
+    <p id="modal-msg"></p>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeConfirm()">Voltar a rever</button>
+      <button class="modal-btn-ok" onclick="submitQuiz()">Submeter</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTADO ══════════════════════════════════════════════════════════ -->
+<div id="screen-result">
+  <div class="result-card">
+    <div class="result-emoji" id="r-emoji"></div>
+    <div class="result-name"  id="r-name"></div>
+    <div class="result-val"   id="r-val"></div>
+    <div class="result-nota"  id="r-nota"></div>
+    <div class="result-pct"   id="r-pct"></div>
+    <div class="ds-grid"      id="r-topics"></div>
+    <div class="send-status"  id="send-status"></div>
+  </div>
+  <div class="wrong-section" id="wrong-section"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+const EMAILJS_PUBLIC_KEY  = '4uQOXeyIMPgiNbrAf';
+const EMAILJS_SERVICE_ID  = 'service_yfq629a';
+const EMAILJS_TEMPLATE_ID = 'template_7wx4ceu';
+
+const Q_ORIGINAL = [
+  {
+    "t": "SELECT básico",
+    "q": "Qual das seguintes instruções selecciona TODOS os campos de TODOS os alunos da tabela Aluno?",
+    "code": "",
+    "opts": [
+      "SELECT nome FROM Aluno;",
+      "SELECT * FROM Aluno;",
+      "SELECT ALL Aluno;",
+      "GET * FROM Aluno;"
+    ],
+    "ans": 1,
+    "fb": "SELECT * FROM tabela; selecciona todos os campos de todos os registos. O asterisco (*) significa 'todos os campos'."
+  },
+  {
+    "t": "SELECT básico",
+    "q": "Qual o resultado de executar a seguinte instrução?",
+    "code": "SELECT nome, dataNasc FROM Aluno;",
+    "opts": [
+      "Mostra todos os campos de todos os alunos",
+      "Mostra apenas o nome e a data de nascimento de todos os alunos",
+      "Mostra apenas os alunos com data de nascimento preenchida",
+      "Dá erro — faltam campos obrigatórios"
+    ],
+    "ans": 1,
+    "fb": "Ao especificar colunas por nome em vez de *, o SELECT devolve apenas essas colunas para todos os registos da tabela."
+  },
+  {
+    "t": "SELECT básico",
+    "q": "Queres ver o idAluno e o nome de todos os alunos. Qual a instrução correcta?",
+    "code": "",
+    "opts": [
+      "SELECT idAluno, nome FROM Aluno;",
+      "SELECT Aluno(idAluno, nome);",
+      "GET idAluno AND nome FROM Aluno;",
+      "SELECT idAluno AND nome FROM Aluno;"
+    ],
+    "ans": 0,
+    "fb": "Para seleccionar colunas específicas, indica os seus nomes separados por vírgula após o SELECT, seguido de FROM e o nome da tabela."
+  },
+  {
+    "t": "SELECT básico",
+    "q": "A instrução abaixo está correcta?",
+    "code": "SELECT * FROM Localidade;",
+    "opts": [
+      "Não — falta a condição WHERE",
+      "Sim — devolve todos os registos e campos da tabela Localidade",
+      "Não — SELECT * não existe em SQL",
+      "Não — o nome da tabela devia ser em minúsculas"
+    ],
+    "ans": 1,
+    "fb": "SELECT * FROM Localidade; é completamente válida. WHERE é opcional — sem ela são devolvidos todos os registos."
+  },
+  {
+    "t": "SELECT básico",
+    "q": "Qual das seguintes instruções selecciona todas as turmas?",
+    "code": "",
+    "opts": [
+      "SHOW * FROM Turma;",
+      "SELECT Turma.*;",
+      "SELECT * FROM Turma;",
+      "SELECT ALL FROM Turma;"
+    ],
+    "ans": 2,
+    "fb": "A sintaxe correcta é sempre SELECT (colunas ou *) FROM (tabela). SHOW e GET não são comandos SQL padrão."
+  },
+  {
+    "t": "SELECT básico",
+    "q": "Que instrução selecciona apenas o campo 'local' da tabela Localidade?",
+    "code": "",
+    "opts": [
+      "SELECT Localidade.local;",
+      "GET local FROM Localidade;",
+      "SELECT * FROM Localidade WHERE local;",
+      "SELECT local FROM Localidade;"
+    ],
+    "ans": 3,
+    "fb": "SELECT nome_coluna FROM tabela; é a forma de seleccionar uma coluna específica. FROM é obrigatório para indicar a tabela de origem."
+  },
+  {
+    "t": "WHERE",
+    "q": "Qual a instrução que devolve APENAS os alunos do sexo feminino?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno WHERE genero = 'F';",
+      "SELECT * FROM Aluno WHERE genero = F;",
+      "SELECT * FROM Aluno IF genero = 'F';",
+      "SELECT * FROM Aluno FILTER genero = 'F';"
+    ],
+    "ans": 0,
+    "fb": "Os valores de texto em SQL têm de estar entre aspas simples: 'F'. Sem aspas, o SQL interpreta F como nome de uma coluna e dá erro."
+  },
+  {
+    "t": "WHERE",
+    "q": "Que instrução devolve os alunos com o apelido 'Santos'?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno WHERE nome = 'Santos';",
+      "SELECT * FROM Aluno WHERE apelido = 'Santos';",
+      "SELECT * FROM Aluno WHERE nome LIKE '%Santos';",
+      "SELECT * FROM Aluno WHERE nome ENDS 'Santos';"
+    ],
+    "ans": 2,
+    "fb": "LIKE '%Santos' usa o wildcard % para qualquer sequência à esquerda — apanha qualquer nome que TERMINE em Santos. A coluna chama-se nome, não apelido."
+  },
+  {
+    "t": "WHERE",
+    "q": "Queres ver os alunos cujo nome começa por 'A'. Qual a instrução correcta?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno WHERE nome LIKE '%A';",
+      "SELECT * FROM Aluno WHERE nome STARTS 'A';",
+      "SELECT * FROM Aluno WHERE nome = 'A*';",
+      "SELECT * FROM Aluno WHERE nome LIKE 'A%';"
+    ],
+    "ans": 3,
+    "fb": "LIKE 'A%' filtra registos onde o campo nome começa por A. O % no fim substitui qualquer sequência de caracteres que venha a seguir."
+  },
+  {
+    "t": "WHERE",
+    "q": "Que instrução selecciona os alunos do sexo masculino?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno WHERE genero = M;",
+      "SELECT * FROM Aluno WHERE genero = 'M';",
+      "SELECT * FROM Aluno WHERE genero != 'F';",
+      "SELECT * FROM Aluno WHERE genero <> 'F';"
+    ],
+    "ans": 1,
+    "fb": "WHERE genero = 'M' é a forma mais directa. Os valores texto em SQL precisam de aspas simples."
+  },
+  {
+    "t": "WHERE",
+    "q": "A instrução seguinte produz que resultado?",
+    "code": "SELECT * FROM Aluno WHERE idTurma = 4;",
+    "opts": [
+      "Apenas o aluno com idAluno=4",
+      "Todos os alunos da turma D (idTurma=4)",
+      "Todos os alunos da sala AN12",
+      "Todos os alunos excepto os da turma 4"
+    ],
+    "ans": 1,
+    "fb": "WHERE idTurma = 4 filtra os registos com idTurma igual a 4 — corresponde à Turma D (sala AN16), mas o filtro é pelo id, não pelo nome da sala."
+  },
+  {
+    "t": "WHERE",
+    "q": "O que faz esta instrução?",
+    "code": "SELECT nome FROM Aluno WHERE genero = 'F' AND idTurma = 3;",
+    "opts": [
+      "Devolve o nome de todas as alunas",
+      "Devolve todos os campos das alunas da turma 3",
+      "Devolve as alunas do sexo feminino OU da turma 3",
+      "Devolve o nome das alunas do sexo feminino da turma 3 (C)"
+    ],
+    "ans": 3,
+    "fb": "O operador AND exige que AMBAS as condições sejam verdadeiras. Selecciona registos simultaneamente do sexo feminino E da turma 3. Devolve só o campo nome."
+  },
+  {
+    "t": "WHERE",
+    "q": "Que instrução selecciona todos os alunos que NÃO são da turma 1?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno WHERE idTurma != 1;",
+      "SELECT * FROM Aluno WHERE idTurma = NOT 1;",
+      "SELECT * FROM Aluno EXCLUDE idTurma = 1;",
+      "SELECT * FROM Aluno WHERE NOT idTurma;"
+    ],
+    "ans": 0,
+    "fb": "!= significa 'diferente de'. Em SQL também se pode usar <> com o mesmo significado: WHERE idTurma <> 1."
+  },
+  {
+    "t": "Datas / WHERE",
+    "q": "Que instrução selecciona alunos nascidos depois de 31 de Dezembro de 2007?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno WHERE dataNasc > '2007-12-31';",
+      "SELECT * FROM Aluno WHERE dataNasc AFTER '2007-12-31';",
+      "SELECT * FROM Aluno WHERE dataNasc > 2007;",
+      "SELECT * FROM Aluno WHERE dataNasc YEAR > 2007;"
+    ],
+    "ans": 0,
+    "fb": "Em SQL as datas são comparadas como texto no formato AAAA-MM-DD. > '2007-12-31' devolve registos com data posterior a essa."
+  },
+  {
+    "t": "Datas / WHERE",
+    "q": "Que instrução selecciona alunos nascidos entre 1 de Setembro e 31 de Dezembro de 2008?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno WHERE dataNasc FROM '2008-09-01' TO '2008-12-31';",
+      "SELECT * FROM Aluno WHERE dataNasc > '2008-09-01' AND dataNasc < '2008-12-31';",
+      "SELECT * FROM Aluno WHERE dataNasc BETWEEN '2008-09-01' AND '2008-12-31';",
+      "SELECT * FROM Aluno WHERE dataNasc >= '2008-09' AND dataNasc <= '2008-12';"
+    ],
+    "ans": 2,
+    "fb": "BETWEEN valor1 AND valor2 é inclusivo — inclui os próprios limites. É equivalente a >= '2008-09-01' AND <= '2008-12-31', mas mais legível."
+  },
+  {
+    "t": "ORDER BY",
+    "q": "Que instrução lista todos os alunos ordenados por data de nascimento do mais novo para o mais velho?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno ORDER BY dataNasc DESC;",
+      "SELECT * FROM Aluno ORDER BY dataNasc ASC;",
+      "SELECT * FROM Aluno SORT BY dataNasc DESC;",
+      "SELECT * FROM Aluno WHERE dataNasc ORDER DESC;"
+    ],
+    "ans": 0,
+    "fb": "ORDER BY dataNasc DESC ordena do valor maior para o menor. Datas maiores = mais recentes = mais novos. DESC devolve os mais novos primeiro."
+  },
+  {
+    "t": "ORDER BY",
+    "q": "Qual a diferença entre ORDER BY nome ASC e ORDER BY nome DESC?",
+    "code": "",
+    "opts": [
+      "ASC ordena de Z a A; DESC ordena de A a Z",
+      "Não há diferença — ambos ordenam alfabeticamente",
+      "ASC ordena por data; DESC ordena por nome",
+      "ASC ordena de A a Z; DESC ordena de Z a A"
+    ],
+    "ans": 3,
+    "fb": "ASC (ascending) = crescente: A→Z para texto, menor→maior para números. DESC (descending) = decrescente: Z→A para texto, maior→menor para números."
+  },
+  {
+    "t": "ORDER BY",
+    "q": "Queres listar os alunos ordenados por turma e, dentro da mesma turma, por nome. Qual a instrução correcta?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno ORDER BY idTurma AND nome;",
+      "SELECT * FROM Aluno ORDER BY idTurma ORDER BY nome;",
+      "SELECT * FROM Aluno ORDER BY idTurma, nome;",
+      "SELECT * FROM Aluno SORT BY idTurma, nome;"
+    ],
+    "ans": 2,
+    "fb": "Para ordenar por múltiplos critérios, separa-os por vírgula no ORDER BY. O primeiro critério é primário; o segundo aplica-se quando o primeiro é igual."
+  },
+  {
+    "t": "Funções de agregação",
+    "q": "Que instrução conta o total de alunos na base de dados?",
+    "code": "",
+    "opts": [
+      "SELECT TOTAL(*) FROM Aluno;",
+      "SELECT NUMBER(*) FROM Aluno;",
+      "SELECT COUNT(*) FROM Aluno;",
+      "SELECT LEN(*) FROM Aluno;"
+    ],
+    "ans": 2,
+    "fb": "COUNT(*) conta o número de linhas de uma tabela. É a forma padrão de contar registos em SQL."
+  },
+  {
+    "t": "LIKE / Padrões",
+    "q": "Qual dos seguintes padrões LIKE apanha nomes como 'Maria João', 'Maria Lopes' e 'Maria'?",
+    "code": "",
+    "opts": [
+      "LIKE '%Maria'",
+      "LIKE '_Maria_'",
+      "LIKE 'Maria%'",
+      "LIKE 'Maria_'"
+    ],
+    "ans": 2,
+    "fb": "'Maria%' apanha qualquer valor que COMECE por 'Maria', seguido de qualquer coisa (incluindo nada). '%Maria' apanharia nomes que terminam em Maria."
+  },
+  {
+    "t": "LIKE / Padrões",
+    "q": "Que instrução encontra alunos cuja morada contém a palavra 'Rua'?",
+    "code": "",
+    "opts": [
+      "SELECT * FROM Aluno WHERE morada = 'Rua';",
+      "SELECT * FROM Aluno WHERE morada LIKE 'Rua%';",
+      "SELECT * FROM Aluno WHERE morada CONTAINS 'Rua';",
+      "SELECT * FROM Aluno WHERE morada LIKE '%Rua%';"
+    ],
+    "ans": 3,
+    "fb": "'%Rua%' apanha qualquer morada que contenha 'Rua' em qualquer posição. 'Rua%' só apanharia moradas que começam exactamente por 'Rua'."
+  },
+  {
+    "t": "LIKE / Padrões",
+    "q": "Quantos alunos devolve esta instrução com os dados visíveis da tabela?",
+    "code": "SELECT * FROM Aluno WHERE nome LIKE 'A%';",
+    "opts": [
+      "0 — LIKE 'A%' não funciona em SQLite",
+      "1 — apenas António Santos",
+      "3 — António, Ana e outro",
+      "2 — António Santos e Ana Travassos"
+    ],
+    "ans": 3,
+    "fb": "Nos dados da tabela, os nomes que começam por 'A' são: António Santos (linha 1) e Ana Travassos (linha 5) — 2 registos."
+  },
+  {
+    "t": "Aliases (AS)",
+    "q": "Para que serve a palavra AS em SQL?",
+    "code": "",
+    "opts": [
+      "Para criar uma nova tabela",
+      "Para filtrar registos",
+      "Para ordenar os resultados",
+      "Para renomear uma coluna ou tabela no resultado da query"
+    ],
+    "ans": 3,
+    "fb": "AS cria um alias (apelido) para uma coluna ou tabela — apenas no resultado da query, não altera a estrutura da base de dados."
+  },
+  {
+    "t": "Estrutura SQL",
+    "q": "Qual o erro nesta instrução?",
+    "code": "SELECT * Aluno WHERE idTurma = 2;",
+    "opts": [
+      "Falta a vírgula depois de *",
+      "WHERE devia ser FILTER",
+      "idTurma devia estar entre aspas",
+      "Falta a palavra FROM antes de Aluno"
+    ],
+    "ans": 3,
+    "fb": "A cláusula FROM é obrigatória para indicar de que tabela se lêem os dados. Instrução correcta: SELECT * FROM Aluno WHERE idTurma = 2;"
+  },
+  {
+    "t": "Estrutura SQL",
+    "q": "Em SQL, os valores de texto (strings) devem ser escritos:",
+    "code": "",
+    "opts": [
+      "Entre aspas duplas: \"texto\"",
+      "Sem aspas: texto",
+      "Entre aspas simples: 'texto'",
+      "Entre parênteses: (texto)"
+    ],
+    "ans": 2,
+    "fb": "O padrão SQL usa aspas simples para strings. Alguns SGBD também aceitam aspas duplas, mas as aspas simples funcionam em todos (incluindo SQLite)."
+  },
+  {
+    "t": "Estrutura SQL",
+    "q": "A instrução seguinte funciona correctamente?",
+    "code": "SELECT * FROM Aluno WHERE nome LIKE 'Maria';",
+    "opts": [
+      "Não — LIKE só funciona com %",
+      "Não — WHERE e LIKE não podem ser usados juntos",
+      "Sim — devolve apenas os alunos com o nome exactamente igual a 'Maria'",
+      "Sim — devolve todos os alunos cujo nome contém 'Maria'"
+    ],
+    "ans": 2,
+    "fb": "LIKE sem % ou _ comporta-se como = (correspondência exacta). Para encontrar nomes que contenham Maria usa-se LIKE '%Maria%'."
+  },
+  {
+    "t": "Chaves e relações",
+    "q": "Na tabela Aluno, o campo idTurma é uma Chave Estrangeira (FK). O que significa isso?",
+    "code": "",
+    "opts": [
+      "idTurma identifica univocamente cada aluno",
+      "idTurma não pode ter valores repetidos",
+      "idTurma é gerado automaticamente pelo SGBD",
+      "idTurma referencia a Chave Primária (PK) da tabela Turma"
+    ],
+    "ans": 3,
+    "fb": "Uma FK é um campo que referencia a PK de outra tabela — aqui idTurma em Aluno aponta para idTurma em Turma. Permite ligar as duas tabelas."
+  },
+  {
+    "t": "Chaves e relações",
+    "q": "Quais são as 3 características obrigatórias de uma Chave Primária (PK)?",
+    "code": "",
+    "opts": [
+      "Texto, Única, Auto-incrementável",
+      "Indexada, Não Nula, Visível",
+      "Obrigatória, Numérica, Única",
+      "Inequívoca, Não Nula, Não Redundante"
+    ],
+    "ans": 3,
+    "fb": "Inequívoca = cada valor identifica um único registo (não se repete). Não Nula = nunca pode estar vazia. Não Redundante = não inclui mais atributos do que o necessário para garantir unicidade."
+  },
+  {
+    "t": "Chaves e relações",
+    "q": "Para ligar as tabelas Aluno e Localidade, que campos são usados?",
+    "code": "",
+    "opts": [
+      "Aluno.morada = Localidade.local",
+      "Aluno.idAluno = Localidade.codPost",
+      "Aluno.codPost = Localidade.codPost",
+      "Aluno.idTurma = Localidade.codPost"
+    ],
+    "ans": 2,
+    "fb": "codPost está presente em ambas as tabelas: é PK em Localidade e FK em Aluno. É o campo de ligação que permite saber em que localidade vive cada aluno."
+  },
+  {
+    "t": "Interpretação de resultados",
+    "q": "Quantas linhas devolve esta instrução com os dados visíveis da tabela?",
+    "code": "SELECT * FROM Aluno WHERE genero = 'F';",
+    "opts": [
+      "1",
+      "2",
+      "5",
+      "3 — Maria João Silva, Marta Lopes e Ana Travassos"
+    ],
+    "ans": 3,
+    "fb": "Nos dados mostrados, as alunas do sexo feminino são: Maria João Silva (2), Marta Lopes (4) e Ana Travassos (5) — 3 registos."
+  },
+  {
+    "t": "Interpretação de resultados",
+    "q": "O que devolve esta instrução com os dados da tabela?",
+    "code": "SELECT COUNT(*) FROM Aluno WHERE idTurma = 4;",
+    "opts": [
+      "Os nomes de todos os alunos da turma D",
+      "O número 4 — há 4 turmas",
+      "O número 5 — há 5 alunos na tabela",
+      "O número 2 — António Santos e Gonçalo Antunes estão na turma 4"
+    ],
+    "ans": 3,
+    "fb": "COUNT(*) conta registos. WHERE idTurma=4 filtra os da turma D. Nos dados visíveis, idTurma=4 aparece em: António Santos (1) e Gonçalo Antunes (3). Resultado: 2."
+  },
+  {
+    "t": "Conceitos BD",
+    "q": "O que é um SGBD (Sistema de Gestão de Bases de Dados)?",
+    "code": "",
+    "opts": [
+      "Uma linguagem de programação para criar websites",
+      "Um sistema operativo especializado em redes",
+      "Um ficheiro Excel com dados organizados em colunas",
+      "Um programa que permite criar, manipular e gerir bases de dados"
+    ],
+    "ans": 3,
+    "fb": "Um SGBD é o software intermediário entre utilizadores e dados armazenados, permitindo criar estruturas, inserir, consultar e proteger informação. Exemplos: SQLite, MySQL, PostgreSQL, Oracle."
+  },
+  {
+    "t": "Conceitos BD",
+    "q": "Qual a diferença entre dado e informação?",
+    "code": "",
+    "opts": [
+      "Não há diferença — são sinónimos em informática",
+      "Dado é sempre numérico; informação é sempre texto",
+      "Um dado isolado como '2890-555' não tem significado; torna-se informação quando contextualizado, por exemplo como código postal de Alcochete",
+      "Informação são os campos; dados são os registos"
+    ],
+    "ans": 2,
+    "fb": "Um dado bruto (ex: '2890-555') não tem significado por si só. Quando contextualizado — 'código postal de Alcochete' — torna-se informação útil. Os dados são a matéria-prima; a informação é o resultado de os processar e contextualizar."
+  },
+  {
+    "t": "Conceitos BD",
+    "q": "Qual dos seguintes é um exemplo de base de dados do dia a dia?",
+    "code": "",
+    "opts": [
+      "Um documento Word com texto corrido",
+      "A lista de contactos do telemóvel",
+      "Uma imagem guardada na galeria",
+      "Um vídeo do YouTube"
+    ],
+    "ans": 1,
+    "fb": "A lista de contactos do telemóvel é uma base de dados: tem uma estrutura definida (campos: nome, telefone, email…), cada contacto é um registo, e é gerida por um sistema que permite pesquisar, adicionar e editar entradas."
+  },
+  {
+    "t": "Conceitos BD",
+    "q": "Os contactos do telemóvel são uma base de dados. Que tipo de informação guardam como campo?",
+    "code": "",
+    "opts": [
+      "Fotografias e vídeos de cada contacto",
+      "O histórico de chamadas de cada contacto",
+      "Atributos como nome, número de telefone e email",
+      "Os SMS enviados e recebidos"
+    ],
+    "ans": 2,
+    "fb": "Num sistema de contactos, cada contacto é um registo e os campos (atributos) são: nome, número de telefone, email, morada, etc. Tal como na tabela Aluno temos os campos nome, dataNasc, genero, morada, codPost e idTurma."
+  },
+  {
+    "t": "Conceitos BD",
+    "q": "O que é uma tabela numa base de dados?",
+    "code": "",
+    "opts": [
+      "Um gráfico que representa os dados visualmente",
+      "Uma estrutura organizada em linhas e colunas que armazena dados sobre uma entidade",
+      "Um ficheiro separado por vírgulas (CSV)",
+      "Um índice que acelera as pesquisas"
+    ],
+    "ans": 1,
+    "fb": "Uma tabela organiza os dados em linhas (registos) e colunas (campos/atributos). Por exemplo, a tabela Aluno tem colunas como idAluno, nome, dataNasc e cada linha representa um aluno específico."
+  },
+  {
+    "t": "Conceitos BD",
+    "q": "Numa tabela de base de dados, o que corresponde a uma linha?",
+    "code": "",
+    "opts": [
+      "Um registo (instância de uma entidade)",
+      "Uma relação entre duas tabelas",
+      "Um campo ou atributo",
+      "Uma Chave Primária (PK)"
+    ],
+    "ans": 0,
+    "fb": "Cada linha é um registo — representa uma ocorrência concreta da entidade. Na tabela Aluno, cada linha é um aluno específico. As colunas são os campos/atributos."
+  },
+  {
+    "t": "SQL DDL",
+    "q": "Qual dos seguintes comandos cria correctamente a tabela Turma com idTurma como Chave Primária (PK) auto-incrementável?",
+    "code": "",
+    "opts": [
+      "CREATE TABLE Turma (idTurma INTEGER PRIMARY KEY AUTOINCREMENT, letra VARCHAR(1) NOT NULL, sala VARCHAR(10));",
+      "INSERT TABLE Turma (idTurma INTEGER PRIMARY KEY, letra VARCHAR, sala VARCHAR);",
+      "CREATE TABLE Turma (idTurma INT, letra VARCHAR(1), sala VARCHAR(10));",
+      "CREATE Turma (idTurma PK AUTO, letra TEXT, sala TEXT);"
+    ],
+    "ans": 0,
+    "fb": "A opção A usa a sintaxe correcta do SQLite: INTEGER PRIMARY KEY AUTOINCREMENT para Chave Primária (PK) automática e NOT NULL para campo obrigatório. INSERT TABLE não existe — INSERT INTO é para dados, não para estrutura."
+  },
+  {
+    "t": "SQL DDL",
+    "q": "Tens a tabela Aluno e queres adicionar a coluna email do tipo VARCHAR(100). Que instrução usar?",
+    "code": "",
+    "opts": [
+      "UPDATE Aluno ADD email VARCHAR(100);",
+      "MODIFY TABLE Aluno INSERT email VARCHAR(100);",
+      "ALTER TABLE Aluno ADD email VARCHAR(100);",
+      "CREATE COLUMN email VARCHAR(100) IN Aluno;"
+    ],
+    "ans": 2,
+    "fb": "ALTER TABLE é o comando DDL para modificar a estrutura de uma tabela existente. ADD adiciona uma nova coluna. DROP elimina uma coluna. UPDATE é DML — altera dados, não a estrutura."
+  },
+  {
+    "t": "SQL DDL",
+    "q": "Qual é a função do comando CREATE TABLE em SQL?",
+    "code": "",
+    "opts": [
+      "Alterar os dados de registos existentes",
+      "Apagar todos os dados de uma tabela",
+      "Definir a estrutura de uma nova tabela (colunas, tipos e restrições)",
+      "Inserir novos registos numa tabela existente"
+    ],
+    "ans": 2,
+    "fb": "CREATE TABLE pertence ao DDL (Data Definition Language) e define a estrutura: nome da tabela, colunas, tipos e restrições como PRIMARY KEY (Chave Primária), NOT NULL, FOREIGN KEY (Chave Estrangeira), CHECK e DEFAULT."
+  },
+  {
+    "t": "SQL DDL",
+    "q": "Analisa este comando. O que garante a linha FOREIGN KEY?",
+    "code": "CREATE TABLE Aluno (\n  idAluno  INTEGER PRIMARY KEY AUTOINCREMENT,\n  nome     VARCHAR(100) NOT NULL,\n  idTurma  INTEGER,\n  FOREIGN KEY (idTurma) REFERENCES Turma(idTurma)\n);",
+    "opts": [
+      "Que idTurma não pode ser NULL",
+      "Que idAluno é gerado automaticamente",
+      "Que só podem existir 4 turmas na base de dados",
+      "Que o valor de idTurma em Aluno tem de existir como idTurma na tabela Turma"
+    ],
+    "ans": 3,
+    "fb": "A restrição FOREIGN KEY (Chave Estrangeira) garante a Integridade Referencial: o valor de idTurma em Aluno tem de existir como Chave Primária (PK) na tabela Turma. Se tentarmos inserir um aluno com idTurma=99 e essa turma não existir, o SGBD rejeita a operação."
+  },
+  {
+    "t": "SQL DDL",
+    "q": "Que comando SQL elimina a tabela Localidade da base de dados (estrutura e dados)?",
+    "code": "",
+    "opts": [
+      "DELETE TABLE Localidade;",
+      "DROP TABLE Localidade;",
+      "REMOVE TABLE Localidade;",
+      "ALTER TABLE Localidade DROP ALL;"
+    ],
+    "ans": 1,
+    "fb": "DROP TABLE elimina a tabela completamente — estrutura e todos os dados. É uma operação irreversível. DELETE FROM Localidade; eliminaria apenas os dados mas manteria a estrutura da tabela."
+  },
+  {
+    "t": "SQL DDL",
+    "q": "Qual a diferença entre DELETE FROM Aluno; e DROP TABLE Aluno;?",
+    "code": "",
+    "opts": [
+      "Não há diferença — ambos eliminam a tabela",
+      "DELETE FROM elimina apenas o primeiro registo; DROP TABLE elimina todos",
+      "DELETE FROM elimina todos os dados mas mantém a estrutura; DROP TABLE elimina tudo incluindo a estrutura",
+      "DROP TABLE é mais rápido mas produz o mesmo resultado que DELETE FROM"
+    ],
+    "ans": 2,
+    "fb": "DELETE FROM Aluno; apaga todos os registos mas a tabela continua a existir — podes continuar a inserir dados. DROP TABLE Aluno; elimina a tabela por completo (estrutura + dados). São operações muito diferentes."
+  },
+  {
+    "t": "SQL DDL",
+    "q": "Na criação de uma tabela, para que serve a restrição NOT NULL num campo?",
+    "code": "",
+    "opts": [
+      "Para garantir que o campo não tem valores repetidos",
+      "Para que o campo seja gerado automaticamente pelo SGBD",
+      "Para impedir que o campo fique vazio — o valor é obrigatório",
+      "Para que o campo só aceite valores numéricos"
+    ],
+    "ans": 2,
+    "fb": "NOT NULL obriga a que o campo tenha sempre um valor — nunca pode ficar vazio. Por exemplo, em CREATE TABLE Aluno (..., nome VARCHAR(100) NOT NULL, ...) o campo nome é obrigatório. Sem NOT NULL, o campo aceita NULL (ausência de valor)."
+  },
+  {
+    "t": "Conceitos BD",
+    "q": "O que é uma relação N:M (vários-para-vários) entre duas tabelas?",
+    "code": "",
+    "opts": [
+      "Uma das tabelas deve ser eliminada e fundida na outra",
+      "A tabela A tem mais registos do que a tabela B",
+      "Cada registo da tabela A corresponde exactamente a um registo da tabela B",
+      "Cada registo da tabela A pode corresponder a vários de B, e vice-versa"
+    ],
+    "ans": 3,
+    "fb": "Numa relação N:M, um aluno pode estar inscrito em várias disciplinas e cada disciplina pode ter vários alunos. Resolve-se com uma tabela de ligação com Chaves Estrangeiras (FK) para ambas as tabelas."
+  },
+  {
+    "t": "Chaves e relações",
+    "q": "O que é a Integridade de Entidade?",
+    "code": "",
+    "opts": [
+      "Garante que dois utilizadores não podem editar o mesmo registo",
+      "Garante que os dados de uma coluna têm sempre o tipo correcto",
+      "Impõe que a Chave Primária (PK) nunca seja nula nem repetida",
+      "Impõe que a Chave Estrangeira (FK) exista na tabela referenciada"
+    ],
+    "ans": 2,
+    "fb": "A Integridade de Entidade protege a Chave Primária (PK): não pode ser NULL e não pode repetir-se. Sem esta regra a base de dados ficaria inconsistente."
+  },
+  {
+    "t": "Normalização",
+    "q": "Uma tabela está na 1ª Forma Normal (1FN) quando:",
+    "code": "",
+    "opts": [
+      "A tabela tem pelo menos uma Chave Estrangeira (FK)",
+      "Não existem dependências transitivas entre atributos",
+      "Todos os atributos dependem da Chave Primária (PK) completa",
+      "Todos os atributos contêm apenas valores atómicos (uma só informação por célula)"
+    ],
+    "ans": 3,
+    "fb": "A 1FN exige atomicidade: cada célula deve conter um único valor indivisível. Violações: coluna 'Disciplinas' com 'Matemática, Física' (multivalor) ou 'Morada' com 'Rua A, 12, Lisboa' (composta)."
+  },
+  {
+    "t": "Normalização",
+    "q": "Na tabela Aluno, qual destas situações seria um exemplo de atributo MULTIVALOR que violaria a 1FN?",
+    "code": "",
+    "opts": [
+      "O campo dataNasc guardar '23-01-2009'",
+      "O campo idTurma guardar o número inteiro 4",
+      "O campo morada guardar 'Rua das Flores, 1' — contém rua e número na mesma célula",
+      "O campo genero guardar 'M' ou 'F'"
+    ],
+    "ans": 2,
+    "fb": "'Rua das Flores, 1' contém dois dados (rua e número) numa só célula — viola a atomicidade da 1FN. Para normalizar separaríamos em campos distintos, ou usaríamos o codPost como referência à tabela Localidade (como já está feito)."
+  },
+  {
+    "t": "SQL DDL",
+    "q": "Qual dos seguintes comandos cria correctamente a tabela Localidade com codPost como Chave Primária (PK)?",
+    "code": "",
+    "opts": [
+      "CREATE TABLE Localidade (codPost VARCHAR(8) PRIMARY KEY, local VARCHAR(50) NOT NULL);",
+      "INSERT TABLE Localidade (codPost VARCHAR(8) PRIMARY KEY, local VARCHAR(50));",
+      "CREATE TABLE Localidade (codPost VARCHAR(8), local VARCHAR(50));",
+      "CREATE Localidade (codPost PK, local TEXT);"
+    ],
+    "ans": 0,
+    "fb": "A opção A usa sintaxe correcta do SQLite: VARCHAR(8) PRIMARY KEY define o código postal como Chave Primária (PK), NOT NULL garante que o nome da localidade é obrigatório. INSERT TABLE não existe em SQL."
+  },
+  {
+    "t": "SQL DML",
+    "q": "Que instrução está correctamente escrita para alterar o nome do aluno com idAluno = 2 para 'Maria Silva'?",
+    "code": "",
+    "opts": [
+      "UPDATE Aluno SET nome = 'Maria Silva' WHERE idAluno = 2;",
+      "MODIFY Aluno SET nome = 'Maria Silva' WHERE idAluno = 2;",
+      "UPDATE nome = 'Maria Silva' WHERE idAluno = 2 IN Aluno;",
+      "UPDATE Aluno nome = 'Maria Silva' WHERE idAluno = 2;"
+    ],
+    "ans": 0,
+    "fb": "Sintaxe correcta do UPDATE: UPDATE tabela SET campo = valor WHERE condição. Sem a cláusula WHERE, TODOS os registos da tabela seriam alterados — um erro muito frequente e difícil de reverter."
+  }
+];
+
+// ── aleatoriedade ─────────────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Embaralha perguntas e, dentro de cada pergunta, embaralha as opções
+// Guarda o mapeamento novo→original para correcção correcta
+let Q = [];
+let studentName = '';
+let answers = [];
+
+function buildShuffledQuiz() {
+  // embaralhar ordem das perguntas
+  const shuffledQs = shuffle(Q_ORIGINAL);
+  Q = shuffledQs.map(orig => {
+    // criar índices embaralhados das opções
+    const optOrder = shuffle([0,1,2,3]);
+    const newOpts  = optOrder.map(i => orig.opts[i]);
+    // nova posição da resposta correcta
+    const newAns   = optOrder.indexOf(orig.ans);
+    return { ...orig, opts: newOpts, ans: newAns };
+  });
+  answers = new Array(Q.length).fill(null);
+}
+
+// ── helpers ───────────────────────────────────────────────────────────────
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function colSQL(h){
+  return h
+    .replace(/\b(SELECT|FROM|WHERE|ORDER BY|GROUP BY|HAVING|INSERT INTO|UPDATE|SET|DELETE|CREATE|ALTER|DROP|AS|AND|OR|NOT|LIKE|IN|BETWEEN|DISTINCT|COUNT|MIN|MAX|AVG|SUM|ASC|DESC|LIMIT|VALUES|INTO|JOIN|ON|REFERENCES|PRIMARY KEY|FOREIGN KEY|NOT NULL|AUTOINCREMENT|DEFAULT|CHECK|INTEGER|VARCHAR|TEXT|NUMERIC|DATE|UNIQUE|ALL|MODIFY|GET|SHOW|TOTAL|LEN|MAXIMUM|HIGH|FORMAT|WITHOUT|STARTS|ENDS|RANGE|CONTAINS|AFTER|SORT BY|FILTER)\b/g,
+      '<span class="kw">$1</span>')
+    .replace(/'([^']*)'/g,"<span class='str'>'$1'</span>")
+    .replace(/\b(\d{4}-\d{2}-\d{2}|\d+\.?\d*)\b/g,'<span class="num">$1</span>');
+}
+function renderCode(code){
+  return code ? '<pre>'+colSQL(esc(code))+'</pre>' : '';
+}
+function renderOpt(text){
+  if(/^\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|GET|SHOW|MODIFY)\b/i.test(text)){
+    return '<code style="font-family:var(--mono);font-size:.75rem;white-space:pre-wrap">'+colSQL(esc(text))+'</code>';
+  }
+  return esc(text);
+}
+
+// ── início ────────────────────────────────────────────────────────────────
+function startQuiz(){
+  const inp  = document.getElementById('input-name');
+  const err  = document.getElementById('name-error');
+  const name = inp.value.trim();
+  if(name.length < 2){
+    inp.classList.add('error');
+    err.style.display = 'block';
+    inp.focus();
+    return;
+  }
+  studentName = name;
+  buildShuffledQuiz();
+  document.getElementById('screen-start').style.display = 'none';
+  document.getElementById('screen-quiz').style.display  = 'flex';
+  document.getElementById('submit-bar').style.display   = 'flex';
+  document.getElementById('header-student').textContent = '👤 ' + studentName;
+  renderQuiz();
+}
+document.getElementById('input-name').addEventListener('keydown', e => {
+  if(e.key === 'Enter') startQuiz();
+});
+
+// ── render ────────────────────────────────────────────────────────────────
+function renderQuiz(){
+  const wrap = document.getElementById('quiz-area');
+  const letters = ['A','B','C','D'];
+  let html = '';
+  Q.forEach((q, qi) => {
+    html += `<div class="q-card" id="qcard-${qi}">
+      <div class="q-header">
+        <span class="q-num">Q${qi+1}</span>
+        <span class="q-topic">${esc(q.t)}</span>
+        <span class="q-badge">✓ respondida</span>
+      </div>
+      <div class="q-text">${esc(q.q).replace(/\n/g,'<br>')}</div>
+      ${renderCode(q.code)}
+      <div class="options">`;
+    q.opts.forEach((opt, oi) => {
+      html += `<div class="opt" id="opt-${qi}-${oi}" onclick="pick(${qi},${oi})">
+        <span class="opt-letter">${letters[oi]}</span>
+        <span class="opt-text">${renderOpt(opt)}</span>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+// ── seleccionar ───────────────────────────────────────────────────────────
+function pick(qi, oi){
+  answers[qi] = oi;
+  for(let i = 0; i < Q[qi].opts.length; i++)
+    document.getElementById(`opt-${qi}-${i}`).classList.remove('selected');
+  document.getElementById(`opt-${qi}-${oi}`).classList.add('selected');
+  document.getElementById(`qcard-${qi}`).classList.add('answered');
+  updateProgress();
+}
+
+function updateProgress(){
+  const done = answers.filter(a => a !== null).length;
+  document.getElementById('prog-bar').style.width = (done / Q.length * 100) + '%';
+  document.getElementById('prog-text').textContent = done;
+  document.getElementById('answered-count').textContent = done;
+  document.getElementById('btn-submit').disabled = done < Q.length;
+}
+
+// ── modal ─────────────────────────────────────────────────────────────────
+function openConfirm(){
+  document.getElementById('modal-msg').textContent =
+    `Respondeste a todas as ${Q.length} perguntas. Confirmas a submissão?`;
+  document.getElementById('modal-confirm').classList.add('open');
+}
+function closeConfirm(){
+  document.getElementById('modal-confirm').classList.remove('open');
+}
+
+// ── submeter ──────────────────────────────────────────────────────────────
+function submitQuiz(){
+  closeConfirm();
+  const correct = Q.filter((q, i) => answers[i] === q.ans).length;
+  const pct     = Math.round(correct / Q.length * 100);
+  const nota    = (correct / Q.length * 20).toFixed(1);
+
+  document.getElementById('screen-quiz').style.display   = 'none';
+  document.getElementById('submit-bar').style.display    = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  const emoji = pct>=80?'🏆':pct>=60?'👍':pct>=40?'📚':'💪';
+  const title = pct>=80?'Excelente!':pct>=60?'Bom resultado!':pct>=40?'Continua a estudar!':'Ainda há trabalho!';
+
+  document.getElementById('r-emoji').textContent = emoji;
+  document.getElementById('r-name').textContent  = studentName;
+  document.getElementById('r-val').textContent   = correct + ' / ' + Q.length;
+  document.getElementById('r-nota').innerHTML    = title + ' &nbsp;—&nbsp; Nota: <strong>' + nota + ' / 20</strong>';
+  document.getElementById('r-pct').textContent   = pct + '% de respostas correctas';
+
+  const topics = [...new Set(Q.map(q => q.t))];
+  let dsHtml = '';
+  topics.forEach(t => {
+    const tqs = Q.filter(q => q.t === t);
+    const tok = tqs.filter(q => answers[Q.indexOf(q)] === q.ans).length;
+    const tp  = Math.round(tok / tqs.length * 100);
+    dsHtml += `<div class="ds-card">
+      <div class="ds-label">${esc(t)}</div>
+      <div class="ds-val ${tp>=80?'ok':tp>=60?'mid':'bad'}">${tok}/${tqs.length} <small style="font-weight:400;color:var(--muted)">(${tp}%)</small></div>
+    </div>`;
+  });
+  document.getElementById('r-topics').innerHTML = dsHtml;
+
+  const wrong  = Q.filter((q, i) => answers[i] !== q.ans);
+  const letters = ['A','B','C','D'];
+  let wHtml = wrong.length === 0
+    ? '<h3 style="color:var(--green)">🎉 Sem erros — perfeito!</h3>'
+    : `<h3>❌ Respostas erradas (${wrong.length})</h3>`;
+  wrong.forEach(q => {
+    const i = Q.indexOf(q);
+    wHtml += `<div class="wrong-item">
+      <div class="wi-q"><strong>Q${i+1}</strong> — ${esc(q.q.substring(0,90))}${q.q.length>90?'…':''}</div>
+      <div class="wi-yours">✗ A tua resposta: ${letters[answers[i]]}) ${esc(q.opts[answers[i]])}</div>
+      <div class="wi-ans">✓ Resposta correcta: ${letters[q.ans]}) ${esc(q.opts[q.ans])}</div>
+    </div>`;
+  });
+  document.getElementById('wrong-section').innerHTML = wHtml;
+
+  sendEmail(studentName, correct, Q.length, nota, pct, wrong, topics);
+}
+
+// ── email ─────────────────────────────────────────────────────────────────
+function sendEmail(name, correct, total, nota, pct, wrong, topics){
+  const st = document.getElementById('send-status');
+  st.className = 'send-status sending';
+  st.style.display = 'block';
+  st.textContent = '📤 A enviar resultado por email…';
+
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  const topicLines = topics.map(t => {
+    const tqs = Q.filter(q => q.t === t);
+    const tok = tqs.filter(q => answers[Q.indexOf(q)] === q.ans).length;
+    return t + ': ' + tok + '/' + tqs.length;
+  }).join('\n');
+
+  const letters = ['A','B','C','D'];
+  const wrongLines = wrong.length === 0
+    ? 'Sem erros!'
+    : wrong.map(q => {
+        const i = Q.indexOf(q);
+        return 'Q'+(i+1)+': respondeu '+letters[answers[i]]+' — correcto: '+letters[q.ans]+') '+q.opts[q.ans];
+      }).join('\n');
+
+  const timestamp = new Date().toLocaleString('pt-PT',{
+    timeZone:'Europe/Lisbon', dateStyle:'short', timeStyle:'short'
+  });
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    student_name : name,
+    score        : correct + ' / ' + total,
+    nota         : nota + ' / 20',
+    percentage   : pct + '%',
+    timestamp    : timestamp,
+    topic_summary: topicLines,
+    wrong_answers: wrongLines,
+  })
+  .then(() => {
+    st.className = 'send-status sent';
+    st.innerHTML = '✅ Resultado enviado para o professor com sucesso!';
+  })
+  .catch(err => {
+    st.className = 'send-status error';
+    st.innerHTML = '⚠️ Erro ao enviar email. Mostra este ecrã ao professor.<br><small>' + (err.text||err) + '</small>';
+  });
+}
+</script>
+</body>
+</html>
