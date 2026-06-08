@@ -947,10 +947,10 @@ function renderCode(code){
   return code ? '<pre>'+colSQL(esc(code))+'</pre>' : '';
 }
 function renderOpt(text){
-  if(/^\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|GET|SHOW|MODIFY)\b/i.test(text)){
-    return '<code style="font-family:var(--mono);font-size:.75rem;white-space:pre-wrap">'+colSQL(esc(text))+'</code>';
-  }
-  return esc(text);
+  // Apply SQL keyword colours inline without changing font size or background
+  const e = esc(text);
+  const hasSql = /\b(SELECT|FROM|WHERE|ORDER BY|GROUP BY|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|NOT NULL|PRIMARY KEY|FOREIGN KEY|AUTOINCREMENT|DEFAULT|CHECK|AS|AND|OR|BETWEEN|LIKE|IN|ASC|DESC|LIMIT|VALUES|SET|DISTINCT|COUNT|MIN|MAX|AVG|SUM|MODIFY|GET|SHOW)\b/i.test(text);
+  return hasSql ? colSQL(e) : e;
 }
 
 // ── início ────────────────────────────────────────────────────────────────
