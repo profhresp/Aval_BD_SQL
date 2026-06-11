@@ -329,17 +329,17 @@ const Q_ORIGINAL = [
     "fb": "SELECT nome_coluna FROM tabela; é a forma de seleccionar uma coluna específica. FROM é obrigatório para indicar a tabela de origem."
   },
   {
-    "t": "WHERE",
-    "q": "Qual a instrução que devolve APENAS os alunos do sexo feminino?",
-    "code": "",
-    "opts": [
-      "SELECT * FROM Aluno WHERE genero = 'F';",
-      "SELECT * FROM Aluno WHERE genero = F;",
-      "SELECT * FROM Aluno IF genero = 'F';",
-      "SELECT * FROM Aluno FILTER genero = 'F';"
-    ],
-    "ans": 0,
-    "fb": "Os valores de texto em SQL têm de estar entre aspas simples: 'F'. Sem aspas, o SQL interpreta F como nome de uma coluna e dá erro."
+     "t": "WHERE",
+     "q": "Que instrução selecciona os alunos do sexo masculino?",
+     "code": "",
+     "opts": [
+          "SELECT * FROM Aluno WHERE genero = M;",
+          "SELECT * FROM Aluno WHERE genero = 'M';",
+          "SELECT * FROM Aluno WHERE genero IS M;",
+          "SELECT * FROM Aluno HAVING genero = 'M';"
+      ],
+     "ans": 1,
+     "fb": "WHERE genero = 'M' é a forma correcta. Os valores texto precisam de aspas simples; IS usa-se apenas com NULL (IS NULL / IS NOT NULL) e HAVING só se aplica a grupos criados com GROUP BY."
   },
   {
     "t": "WHERE",
@@ -837,7 +837,7 @@ const Q_ORIGINAL = [
   },
   {
     "t": "Normalização",
-    "q": "Na tabela Aluno, qual destas situações seria um exemplo de atributo MULTIVALOR que violaria a 1FN?",
+    "q": "Na tabela Aluno, qual destas situações seria um exemplo de atributo COMPOSTO (não atómico) que violaria a 1FN?",
     "code": "",
     "opts": [
       "O campo dataNasc guardar '23-01-2009'",
@@ -846,7 +846,7 @@ const Q_ORIGINAL = [
       "O campo genero guardar 'M' ou 'F'"
     ],
     "ans": 2,
-    "fb": "'Rua das Flores, 1' contém dois dados (rua e número) numa só célula — viola a atomicidade da 1FN. Para normalizar separaríamos em campos distintos, ou usaríamos o codPost como referência à tabela Localidade (como já está feito)."
+    "fb": "'Rua das Flores, 1' é um atributo composto: junta dois dados (rua e número de porta) numa só célula, violando a atomicidade da 1FN. Diferente de um atributo multivalor, que guardaria vários valores do mesmo tipo (ex: 'Matemática, Física' numa coluna Disciplinas). Para normalizar separar-se-iam os campos."
   },
   {
     "t": "SQL DDL",
